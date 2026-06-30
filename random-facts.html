@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Facts</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .fact-box {
+            background: #f5f5f5;
+            border-left: 5px solid #667eea;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fact-text {
+            color: #333;
+            font-size: 1.2em;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+            transform: translateY(-2px);
+        }
+
+        .counter {
+            color: #999;
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .fact-text {
+                font-size: 1em;
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌟 Random Facts</h1>
+        <p class="subtitle">Learn something new every day!</p>
+        
+        <div class="fact-box">
+            <p class="fact-text" id="factText">Click the button below to get a random fact!</p>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-primary" onclick="getRandomFact()">Get Random Fact</button>
+            <button class="btn-secondary" onclick="resetFacts()">Reset</button>
+        </div>
+
+        <div class="counter">
+            <span id="factCount">0</span> facts learned so far
+        </div>
+    </div>
+
+    <script>
+        const facts = [
+            "Honey never spoils. Archaeologists have found 3,000-year-old honey in Egyptian tombs that was still edible!",
+            "A group of flamingos is called a 'flamboyance'.",
+            "Octopuses have three hearts. Two pump blood to the gills, while the third pumps it to the rest of the body.",
+            "The Great Wall of China isn't visible from space with the naked eye.",
+            "A day on Venus is longer than a year on Venus.",
+            "Bananas are berries, but strawberries aren't!",
+            "The smell of petrichor (rain on dry earth) comes from a chemical called geosmin.",
+            "Cleopatra lived closer to the moon landing than to the construction of the Great Pyramid.",
+            "A group of pandas is called a 'cupboard'.",
+            "Penguins have knees! They're just hidden under their feathers.",
+            "Carrots weren't always orange. The original wild carrots were purple.",
+            "A group of crows is called a 'murder'.",
+            "The fingerprints of koalas are so similar to human fingerprints that they could confuse crime scene investigators.",
+            "Wombat feces are cube-shaped to prevent them from rolling away.",
+            "A 'jiffy' is actually a scientific unit of time (0.01 nanoseconds).",
+            "The shortest war in history lasted only 38 minutes (between Britain and Zanzibar in 1896).",
+            "Ants don't have ears; they 'hear' by sensing vibrations through their feet.",
+            "The left lung is smaller than the right lung to make room for the heart.",
+            "Snakes don't have eyelids; their eyes are covered by a transparent scale.",
+            "Sloths only defecate once a week and lose up to 30% of their body weight when they do.",
+            "A shrimp's heart is in its head.",
+            "The male seahorse gives birth to the babies, not the female.",
+            "A cockroach can live for a week without its head.",
+            "Dolphins have names for each other.",
+            "Cats spend 70% of their lives sleeping.",
+            "A blue whale's heart weighs as much as an elephant.",
+            "Polar bears have black skin under their white fur.",
+            "The horns of a rhinoceros are made of keratin, the same material as human fingernails.",
+            "Chameleons can move their eyes independently of each other.",
+            "A group of jellyfish is called a 'bloom' or 'swarm'."
+        ];
+
+        let factsShown = 0;
+        let lastFactIndex = -1;
+
+        function getRandomFact() {
+            let randomIndex;
+            
+            // Ensure we don't show the same fact twice in a row
+            do {
+                randomIndex = Math.floor(Math.random() * facts.length);
+            } while (randomIndex === lastFactIndex && facts.length > 1);
+
+            lastFactIndex = randomIndex;
+            const randomFact = facts[randomIndex];
+            
+            const factElement = document.getElementById('factText');
+            factElement.style.opacity = '0';
+            
+            setTimeout(() => {
+                factElement.textContent = randomFact;
+                factElement.style.transition = 'opacity 0.5s ease';
+                factElement.style.opacity = '1';
+            }, 300);
+
+            factsShown++;
+            document.getElementById('factCount').textContent = factsShown;
+        }
+
+        function resetFacts() {
+            factsShown = 0;
+            lastFactIndex = -1;
+            document.getElementById('factText').textContent = 'Click the button below to get a random fact!';
+            document.getElementById('factCount').textContent = '0';
+        }
+
+        // Add smooth transition style
+        document.getElementById('factText').style.transition = 'opacity 0.5s ease';
+    </script>
+</body>
+</html>
